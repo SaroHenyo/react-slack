@@ -1,41 +1,45 @@
-import {useState} from "react";
-import styled from 'styled-components';
-import { db } from "../firebase";
+import { useState } from "react";
+import styled from "styled-components";
+import { auth, db } from "../firebase";
 import firebase from "firebase/compat/app";
+import { useAuthState } from "react-firebase-hooks/auth";
 
+export default function ChatInput({ channelName, channelId, chatRef }) {
+  const [input, setInput] = useState("");
+  const [user] = useAuthState(auth);
 
-export default function ChatInput({ channelName, channelId }) {
-        const [input, setInput] = useState("");
+  const sendMessage = (e) => {
+    e.preventDefault();
 
-        const sendMessage = (e) => {
-                e.preventDefault();
+    db.collection("rooms").doc(channelId).collection("messages").add({
+      message: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      user: user.displayName,
+      userImage: user.photoURL,
+    });
 
-                db.collection("rooms").doc(channelId).collection("messages").add({
-                        messages: input,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        user: "Saro Henyo",
-                        userImage: "https://freesvg.org/img/1534906694.png",
-                });
+    chatRef.current.scrollIntoView({
+      behavior: "smooth",
+    });
 
-                setInput("");
-
-        };
+    setInput("");
+  };
 
   return (
     <ChatInputContainer>
-        <form>
-        <input 
-        value={input} 
-        onChange={(e) => setInput(e.target.value)} 
-        placeholder={`Message #${channelName}`} />
+      <form onSubmit={sendMessage}>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={`Message #${channelName}`}
+        />
         <button hidden type="submit" onClick={sendMessage}>
-                SEND
+          SEND
         </button>
-        </form>
+      </form>
     </ChatInputContainer>
-    );
+  );
 }
-
 
 const ChatInputContainer = styled.div`
   border-radius: 20px;

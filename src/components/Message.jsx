@@ -1,15 +1,19 @@
-import React from 'react'
-import styled from "styled-components"
+import React from "react";
+import styled from "styled-components";
 
-export default function Message({ userImage, user, timestamp }) {
-  return <MessageContainer>
-        <img src="{userImage}" alt="" />
-        <MessageInfo>
-                <h4>{user} <span>{new Date(timestamp?.toDate()).toUTCString()}</span></h4>
-        </MessageInfo>
-  </MessageContainer>;
+export default function Message({ userImage, user, timestamp, message }) {
+  return (
+    <MessageContainer>
+      <img src={userImage} alt="" />
+      <MessageInfo>
+        <h4>
+          {user} <span>{new Date(timestamp?.toDate()).toUTCString()}</span>
+        </h4>
+        <p>{message}</p>
+      </MessageInfo>
+    </MessageContainer>
+  );
 }
-
 
 const MessageContainer = styled.div`
   display: flex;
@@ -21,7 +25,6 @@ const MessageContainer = styled.div`
     border-radius: 8px;
   }
 `;
-
 
 const MessageInfo = styled.div`
   padding-left: 10px;
